@@ -1,32 +1,42 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../App/App.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { setMeassurement } from '../../action'
+import Meassurement from '../../reducers/Meassurement';
 
-const initialValues = {
-	weight: '',
-	height: '',
-	date: ''
-}
+// const initialValues = {
+// 	weight: '',
+// 	height: '',
+// 	date: ''
+// }
 
 const BmiForm = ({ change }) => {
-	const [state, setState] = useState(initialValues);
 
+	//const [state, setState] = useState(initialValues);
+	const state = useSelector((state) => state.Meassurement.meassure)
+	console.log(state);
+	const { weight, height } = state
+	const dispatch = useDispatch();
 	const handleChange = e => {
 		let { value, name } = e.target;
+		console.log(value)
 		if (value > 999) {
 			value = 999;
 		}
-		const date = new Date().toLocaleString().split(',')[0];
-		setState({
-			...state,
-			[name]: value,
-			date
-		});
+
+		const setMeassure = { ...state, [name]: value };
+		dispatch(setMeassurement(setMeassure))
+		// setState({
+		// 	...state,
+		// 	[name]: value,
+		// 	date
+		// });
 	};
 
 	const handleSubmit = () => {
 		change(state);
-		setState(initialValues);
+		//setState(initialValues);
 	};
 
 	return (
@@ -41,7 +51,7 @@ const BmiForm = ({ change }) => {
 						min="1"
 						max="999"
 						placeholder="50"
-						value={state.weight}
+						value={weight}
 						onChange={handleChange}
 					/>
 				</div>
@@ -55,7 +65,7 @@ const BmiForm = ({ change }) => {
 						min="1"
 						max="999"
 						placeholder="176"
-						value={state.height}
+						value={height}
 						onChange={handleChange}
 					/>
 				</div>
@@ -65,7 +75,7 @@ const BmiForm = ({ change }) => {
 					id="bmi-btn"
 					className="calculate-btn"
 					type="button"
-					disabled={state.weight === '' || state.height === ''}
+					disabled={weight === '' || height === ''}
 					onClick={handleSubmit}
 				>
 					Calculate BMI
